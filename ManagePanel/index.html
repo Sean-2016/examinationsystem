@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>体检中心管理后台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>体检中心</h1>
+                <p>管理后台</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-page="package">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-text">套餐管理</span>
+                    </li>
+                    <li class="nav-item" data-page="exam-project">
+                        <span class="nav-icon">🧪</span>
+                        <span class="nav-text">体检项目管理</span>
+                    </li>
+                    <li class="nav-item" data-page="patient">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">患者管理</span>
+                    </li>
+                    <li class="nav-item" data-page="appointment">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-text">预约管理</span>
+                    </li>
+                    <li class="nav-item" data-page="examination">
+                        <span class="nav-icon">🏥</span>
+                        <span class="nav-text">体检台</span>
+                    </li>
+                    <li class="nav-item" data-page="report">
+                        <span class="nav-icon">📄</span>
+                        <span class="nav-text">体检报告管理</span>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 右侧操作栏 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="top-header">
+                <h2 id="page-title">套餐管理</h2>
+                <div class="user-info">
+                    <div class="user-dropdown">
+                        <span id="current-user" class="user-name-clickable">管理员</span>
+                        <div id="user-dropdown-menu" class="dropdown-menu" style="display: none;">
+                            <button class="logout-btn" onclick="logout()">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 套餐管理页面 -->
+                <div id="package-page" class="page-content active">
+                    <div class="page-header">
+                        <button class="btn btn-primary" onclick="showAddPackageModal()">+ 新增套餐</button>
+                        <div class="filter-group">
+                            <label for="package-status-filter" class="filter-label">状态</label>
+                            <select class="filter-select" id="package-status-filter">
+                                <option value="">全部</option>
+                                <option value="active">启用</option>
+                                <option value="inactive">停用</option>
+                            </select>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索套餐名称..." id="package-search">
+                            <button class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    <div id="package-adjustment-banner" class="package-adjustment-banner" style="display: none;"></div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>套餐ID</th>
+                                    <th>套餐名称</th>
+                                    <th>适用性别</th>
+                                    <th>科室数量</th>
+                                    <th>创建人</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="package-table-body">
+                                <tr data-status="active">
+                                    <td>PKG001</td>
+                                    <td>基础体检套餐</td>
+                                    <td>通用</td>
+                                    <td>5</td>
+                                    <td>张三</td>
+                                    <td><span class="status-badge active">启用</span></td>
+                                    <td>2024-01-10 09:00:00</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-edit" onclick="editPackage(1)">编辑</button>
+                                        <button class="btn btn-sm btn-delete">删除</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="active">
+                                    <td>PKG002</td>
+                                    <td>女性专属套餐</td>
+                                    <td>女性</td>
+                                    <td>8</td>
+                                    <td>李四</td>
+                                    <td><span class="status-badge active">启用</span></td>
+                                    <td>2024-02-01 14:20:00</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-edit" onclick="editPackage(2)">编辑</button>
+                                        <button class="btn btn-sm btn-delete">删除</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="inactive">
+                                    <td>PKG003</td>
+                                    <td>男性专属套餐</td>
+                                    <td>男性</td>
+                                    <td>7</td>
+                                    <td>王五</td>
+                                    <td><span class="status-badge inactive">停用</span></td>
+                                    <td>2023-12-01 11:00:00</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-edit" onclick="editPackage(3)">编辑</button>
+                                        <button class="btn btn-sm btn-delete">删除</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 体检项目管理页面 -->
+                <div id="exam-project-page" class="page-content">
+                    <div class="exam-project-layout">
+                        <aside class="exam-project-sidebar">
+                            <div class="project-panel-header">
+                                <h3>体检科室</h3>
+                                <div class="project-panel-actions">
+                                    <span id="exam-project-department-count">0个科室</span>
+                                    <button class="btn btn-primary btn-sm" type="button" onclick="showAddExamDepartment()">+ 新增</button>
+                                </div>
+                            </div>
+                            <div class="project-department-search">
+                                <input type="text" id="exam-project-department-search" placeholder="搜索科室/类别">
+                            </div>
+                            <div id="exam-project-department-list" class="project-department-list"></div>
+                        </aside>
+
+                        <section class="exam-project-main">
+                            <div class="project-main-header">
+                                <div>
+                                    <div class="project-main-eyebrow">体检科室</div>
+                                    <h3 id="exam-project-current-department">-</h3>
+                                </div>
+                                <button class="btn btn-primary" type="button" onclick="showAddExamItemModal()">+ 新增体检项</button>
+                            </div>
+
+                            <div class="project-toolbar">
+                                <div class="filter-group">
+                                    <label for="exam-project-category-filter" class="filter-label">检查类别</label>
+                                    <select class="filter-select" id="exam-project-category-filter">
+                                        <option value="">全部</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="exam-project-data-filter" class="filter-label">数据类型</label>
+                                    <select class="filter-select" id="exam-project-data-filter">
+                                        <option value="">全部</option>
+                                        <option value="数字">数字</option>
+                                        <option value="文本">文本</option>
+                                        <option value="枚举">枚举</option>
+                                    </select>
+                                </div>
+                                <div class="search-box">
+                                    <input type="text" placeholder="搜索体检项/子项..." id="exam-project-search">
+                                    <button class="search-btn" type="button" onclick="filterExamProjectTable()">🔍</button>
+                                </div>
+                            </div>
+
+                            <div class="project-item-layout">
+                                <aside class="project-item-nav-panel">
+                                    <div class="project-item-nav-header">
+                                        <h4>体检项</h4>
+                                        <span id="exam-project-item-count">0项</span>
+                                    </div>
+                                    <div id="exam-project-item-nav" class="project-item-nav"></div>
+                                </aside>
+                                <section class="project-subitem-panel">
+                                    <div class="project-subitem-header">
+                                        <div>
+                                            <div class="project-main-eyebrow">体检子项</div>
+                                            <h4 id="exam-project-current-item">-</h4>
+                                        </div>
+                                        <div class="project-subitem-actions">
+                                            <span id="exam-project-current-item-count">0个子项</span>
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="showAddExamSubItemModal()">+ 新增体检子项</button>
+                                        </div>
+                                    </div>
+                                    <div id="exam-project-content" class="exam-project-content"></div>
+                                </section>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- 患者管理页面 -->
+                <div id="patient-page" class="page-content">
+                    <div class="page-header">
+                        <button class="btn btn-primary" onclick="showAddPatientModal()">+ 新增患者</button>
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索患者姓名/手机号..." id="patient-search">
+                            <button class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>患者ID</th>
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>年龄</th>
+                                    <th>手机号</th>
+                                    <th>身份证号</th>
+                                    <th>注册时间</th>
+                                    <th>体检次数</th>
+                                    <th>最近体检时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patient-table-body">
+                                <!-- 动态渲染 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 体检台页面 -->
+                <div id="examination-page" class="page-content">
+                    <div class="page-header">
+                        <div class="filter-group">
+                            <select class="filter-select" id="examination-department-status">
+                                <option value="">体检科室状态：全部</option>
+                                <option value="待录入">待录入</option>
+                                <option value="AI解析中">AI解析中</option>
+                                <option value="AI解析完成">AI解析完成</option>
+                                <option value="已录入">已录入</option>
+                            </select>
+                            <label for="examination-department" class="filter-label">体检科室</label>
+                            <select class="filter-select" id="examination-department">
+                                <option value="">全部</option>
+                                <option value="一般检查">一般检查</option>
+                                <option value="物理检查">物理检查</option>
+                                <option value="常规检查">常规检查</option>
+                                <option value="生化检查">生化检查</option>
+                                <option value="免疫/感染">免疫/感染</option>
+                                <option value="肿瘤筛查">肿瘤筛查</option>
+                                <option value="心电图">心电图</option>
+                                <option value="超声检查">超声检查</option>
+                                <option value="影像检查">影像检查</option>
+                                <option value="内镜检查">内镜检查</option>
+                                <option value="专项检查">专项检查</option>
+                            </select>
+                            <input type="date" class="filter-date" id="examination-date" placeholder="体检日期">
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索患者姓名..." id="examination-search">
+                            <button class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>体检日期</th>
+                                    <th>体检编号</th>
+                                    <th>患者姓名</th>
+                                    <th>套餐名称</th>
+                                    <th>检查类别</th>
+                                    <th>体检科室状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examination-table-body">
+                                <tr data-status="已录入" data-category="一般检查" data-exam-date="2024-03-15">
+                                    <td>2024-03-15</td>
+                                    <td>EXAM20240315001</td>
+                                    <td>张三</td>
+                                    <td>基础体检套餐</td>
+                                    <td>一般检查</td>
+                                    <td><span class="status-badge completed">已录入</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240315001', '一般检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240315001', '一般检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="待录入" data-category="物理检查" data-exam-date="2024-03-15">
+                                    <td>2024-03-15</td>
+                                    <td>EXAM20240315001</td>
+                                    <td>张三</td>
+                                    <td>基础体检套餐</td>
+                                    <td>物理检查</td>
+                                    <td><span class="status-badge pending">待录入</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240315001', '物理检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240315001', '物理检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="AI解析中" data-category="常规检查" data-exam-date="2024-03-15">
+                                    <td>2024-03-15</td>
+                                    <td>EXAM20240315001</td>
+                                    <td>张三</td>
+                                    <td>基础体检套餐</td>
+                                    <td>常规检查</td>
+                                    <td><span class="status-badge ai-parsing">AI解析中</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240315001', '常规检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240315001', '常规检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="AI解析完成" data-category="生化检查" data-exam-date="2024-03-20">
+                                    <td>2024-03-20</td>
+                                    <td>EXAM20240320002</td>
+                                    <td>李四</td>
+                                    <td>女性专属套餐</td>
+                                    <td>生化检查</td>
+                                    <td><span class="status-badge ai-completed">AI解析完成</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240320002', '生化检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240320002', '生化检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="已录入" data-category="免疫/感染" data-exam-date="2024-03-20">
+                                    <td>2024-03-20</td>
+                                    <td>EXAM20240320002</td>
+                                    <td>李四</td>
+                                    <td>女性专属套餐</td>
+                                    <td>免疫/感染</td>
+                                    <td><span class="status-badge completed">已录入</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240320002', '免疫/感染', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240320002', '免疫/感染', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="已录入" data-category="影像检查" data-exam-date="2024-03-25">
+                                    <td>2024-03-25</td>
+                                    <td>EXAM20240325003</td>
+                                    <td>王五</td>
+                                    <td>男性专属套餐</td>
+                                    <td>影像检查</td>
+                                    <td><span class="status-badge completed">已录入</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240325003', '影像检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240325003', '影像检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="AI解析完成" data-category="专项检查" data-exam-date="2024-03-25">
+                                    <td>2024-03-25</td>
+                                    <td>EXAM20240325003</td>
+                                    <td>王五</td>
+                                    <td>男性专属套餐</td>
+                                    <td>专项检查</td>
+                                    <td><span class="status-badge ai-completed">AI解析完成</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-view" onclick="viewExamination('EXAM20240325003', '专项检查', event)">查看</button>
+                                        <button type="button" class="btn btn-sm btn-generate" onclick="enterExamination('EXAM20240325003', '专项检查', event)">录入</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 预约管理页面 -->
+                <div id="appointment-page" class="page-content">
+                    <div class="appointment-filter-bar">
+                        <div class="appointment-filter-fields">
+                            <div class="filter-field">
+                                <label class="filter-field-label" for="appointment-filter-name">患者姓名</label>
+                                <input type="text" id="appointment-filter-name" class="filter-input" placeholder="请输入患者姓名" autocomplete="off">
+                            </div>
+                            <div class="filter-field">
+                                <label class="filter-field-label" for="appointment-filter-phone">手机号</label>
+                                <input type="text" id="appointment-filter-phone" class="filter-input" placeholder="请输入手机号" maxlength="11" inputmode="numeric" autocomplete="off">
+                            </div>
+                            <div class="filter-field">
+                                <label class="filter-field-label" for="appointment-filter-status">状态</label>
+                                <select id="appointment-filter-status" class="filter-select filter-select-status">
+                                    <option value="">请选择</option>
+                                    <option value="已预约">已预约</option>
+                                    <option value="已取消">已取消</option>
+                                    <option value="已签到">已签到</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="appointment-filter-actions">
+                            <button type="button" class="btn btn-primary" onclick="filterAppointmentList()">🔍 搜索</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetAppointmentFilters()">↺ 重置</button>
+                        </div>
+                    </div>
+                    <div class="page-header appointment-actions-row">
+                        <button type="button" class="btn btn-primary" onclick="showAddAppointmentModal()">+ 新增预约</button>
+                        <div class="appointment-toolbar-icons">
+                            <button type="button" class="btn btn-icon" title="搜索" onclick="filterAppointmentList()">🔍</button>
+                            <button type="button" class="btn btn-icon" title="刷新" onclick="refreshAppointmentList()">↻</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>预约编号</th>
+                                    <th>患者姓名</th>
+                                    <th>手机号</th>
+                                    <th>套餐</th>
+                                    <th>日期</th>
+                                    <th>时间段</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointment-table-body">
+                                <tr data-name="岳威" data-phone="18612346410" data-status="已预约">
+                                    <td>APT202603251556365421</td>
+                                    <td>岳威</td>
+                                    <td>186****6410</td>
+                                    <td>全亚VIP套餐 (970)</td>
+                                    <td>2026-03-27</td>
+                                    <td>上午</td>
+                                    <td><span class="status-badge status-booked">已预约</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-checkin" onclick="appointmentCheckIn('APT202603251556365421')">签到</button>
+                                        <button type="button" class="btn btn-sm btn-cancel-appt" onclick="appointmentCancel('APT202603251556365421')">取消</button>
+                                    </td>
+                                </tr>
+                                <tr data-name="test3" data-phone="13900000003" data-status="已取消">
+                                    <td>APT202603251556365422</td>
+                                    <td>test3</td>
+                                    <td>139****0003</td>
+                                    <td>基础体检套餐</td>
+                                    <td>2026-03-27</td>
+                                    <td>下午</td>
+                                    <td><span class="status-badge status-cancelled">已取消</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-checkin" onclick="appointmentCheckIn('APT202603251556365422')">签到</button>
+                                        <button type="button" class="btn btn-sm btn-cancel-appt" onclick="appointmentCancel('APT202603251556365422')">取消</button>
+                                    </td>
+                                </tr>
+                                <tr data-name="张三" data-phone="13852058888" data-status="已签到">
+                                    <td>APT20240401001</td>
+                                    <td>张三</td>
+                                    <td>138****8888</td>
+                                    <td>基础体检套餐</td>
+                                    <td>2024-04-01</td>
+                                    <td>上午</td>
+                                    <td><span class="status-badge status-checked-in">已签到</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-checkin" onclick="appointmentCheckIn('APT20240401001')">签到</button>
+                                        <button type="button" class="btn btn-sm btn-cancel-appt" onclick="appointmentCancel('APT20240401001')">取消</button>
+                                    </td>
+                                </tr>
+                                <tr data-name="李四" data-phone="13912349999" data-status="已预约">
+                                    <td>APT20240402002</td>
+                                    <td>李四</td>
+                                    <td>139****9999</td>
+                                    <td>女性专属套餐</td>
+                                    <td>2024-04-02</td>
+                                    <td>下午</td>
+                                    <td><span class="status-badge status-booked">已预约</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-checkin" onclick="appointmentCheckIn('APT20240402002')">签到</button>
+                                        <button type="button" class="btn btn-sm btn-cancel-appt" onclick="appointmentCancel('APT20240402002')">取消</button>
+                                    </td>
+                                </tr>
+                                <tr data-name="王五" data-phone="13713467777" data-status="已预约">
+                                    <td>APT20240403003</td>
+                                    <td>王五</td>
+                                    <td>137****7777</td>
+                                    <td>男性专属套餐</td>
+                                    <td>2024-04-03</td>
+                                    <td>上午</td>
+                                    <td><span class="status-badge status-booked">已预约</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-checkin" onclick="appointmentCheckIn('APT20240403003')">签到</button>
+                                        <button type="button" class="btn btn-sm btn-cancel-appt" onclick="appointmentCancel('APT20240403003')">取消</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 体检报告管理页面 -->
+                <div id="report-page" class="page-content">
+                    <div class="page-header">
+                        <div class="filter-group">
+                            <select class="filter-select" id="report-status-filter">
+                                <option value="">全部状态</option>
+                                <option value="未完成录入">未完成录入</option>
+                                <option value="待审核">待审核</option>
+                                <option value="生成中">生成中</option>
+                                <option value="已生成">已生成</option>
+                            </select>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索患者姓名/报告编号..." id="report-search">
+                            <button class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>报告编号</th>
+                                    <th>患者姓名</th>
+                                    <th>套餐名称</th>
+                                    <th>体检日期</th>
+                                    <th>报告状态</th>
+                                    <th>生成时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-status="已生成">
+                                    <td>RPT20240115001</td>
+                                    <td>张三</td>
+                                    <td>基础体检套餐</td>
+                                    <td>2024-01-15</td>
+                                    <td><span class="status-badge completed">已生成</span></td>
+                                    <td>2024-01-16 10:00</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-view" onclick="viewReport('RPT20240115001', 'EXAM20240315001', '张三', '基础体检套餐', '2024-01-15', '已生成')">查看</button>
+                                        <button class="btn btn-sm btn-download">下载报告</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewCompleteReport('RPT20240115001', 'EXAM20240315001', '张三', '基础体检套餐', '2024-01-15')">查看完成报告</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="已生成">
+                                    <td>RPT20240201003</td>
+                                    <td>王五</td>
+                                    <td>男性专属套餐</td>
+                                    <td>2024-02-01</td>
+                                    <td><span class="status-badge completed">已生成</span></td>
+                                    <td>2024-02-02 15:30</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-view" onclick="viewReport('RPT20240201003', 'EXAM20240325003', '王五', '男性专属套餐', '2024-02-01', '已生成')">查看</button>
+                                        <button class="btn btn-sm btn-download">下载报告</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewCompleteReport('RPT20240201003', 'EXAM20240325003', '王五', '男性专属套餐', '2024-02-01')">查看完成报告</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="未完成录入">
+                                    <td>RPT20240210004</td>
+                                    <td>赵六</td>
+                                    <td>基础体检套餐</td>
+                                    <td>2024-02-10</td>
+                                    <td><span class="status-badge inactive">未完成录入</span></td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-view" onclick="viewReport('RPT20240210004', 'EXAM20240315001', '赵六', '基础体检套餐', '2024-02-10', '未完成录入')">查看</button>
+                                        <button class="btn btn-sm btn-download" style="display: none;">下载报告</button>
+                                        <button class="btn btn-sm btn-secondary" style="display: none;">查看完成报告</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="待审核">
+                                    <td>RPT20240215005</td>
+                                    <td>孙七</td>
+                                    <td>女性专属套餐</td>
+                                    <td>2024-02-15</td>
+                                    <td><span class="status-badge paid">待审核</span></td>
+                                    <td>2024-02-16 09:00</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-view" onclick="viewReport('RPT20240215005', 'EXAM20240320002', '孙七', '女性专属套餐', '2024-02-15', '待审核')">查看</button>
+                                        <button class="btn btn-sm btn-download" style="display: none;">下载报告</button>
+                                        <button class="btn btn-sm btn-secondary" style="display: none;">查看完成报告</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="生成中">
+                                    <td>RPT20240220006</td>
+                                    <td>周八</td>
+                                    <td>男性专属套餐</td>
+                                    <td>2024-02-20</td>
+                                    <td><span class="status-badge ai-parsing">生成中</span></td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-view" onclick="viewReport('RPT20240220006', 'EXAM20240325003', '周八', '男性专属套餐', '2024-02-20', '生成中')">查看</button>
+                                        <button class="btn btn-sm btn-download" style="display: none;">下载报告</button>
+                                        <button class="btn btn-sm btn-secondary" style="display: none;">查看完成报告</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 套餐项目调整通知模态框 -->
+    <div id="package-adjustment-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>套餐项目调整提醒</h3>
+                <span class="modal-close" onclick="closePackageAdjustmentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="adjustment-summary">
+                    <strong id="package-adjustment-summary-title">检测到套餐项目变化</strong>
+                    <p id="package-adjustment-summary-text">部分套餐包含已停用的体检子项。</p>
+                </div>
+                <div id="package-adjustment-list" class="package-adjustment-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closePackageAdjustmentModal()">稍后处理</button>
+                <button class="btn btn-secondary" type="button" onclick="openExamProjectFromPackageWarning()">查看体检项目管理</button>
+                <button class="btn btn-primary" type="button" onclick="removeAllDisabledItemsFromPackages()">移除全部不可用项</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑体检项模态框 -->
+    <div id="exam-item-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>编辑体检项</h3>
+                <span class="modal-close" onclick="closeExamItemModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="exam-item-form">
+                    <input type="hidden" id="exam-item-original-name">
+                    <div class="form-group">
+                        <label>体检科室</label>
+                        <input type="text" id="exam-item-department" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>检查类别 <span class="required">*</span></label>
+                        <select id="exam-item-category" required>
+                            <option value="常规检查">常规检查</option>
+                            <option value="物理检查">物理检查</option>
+                            <option value="一般检查">一般检查</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>体检项名称 <span class="required">*</span></label>
+                        <input type="text" id="exam-item-name" placeholder="请输入体检项名称" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeExamItemModal()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="saveExamItemEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增体检科室模态框 -->
+    <div id="exam-department-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 id="exam-department-modal-title">新增体检科室</h3>
+                <span class="modal-close" onclick="closeExamDepartmentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="exam-department-form">
+                    <input type="hidden" id="exam-department-mode">
+                    <input type="hidden" id="exam-department-original-name">
+                    <div class="form-group">
+                        <label>科室名称 <span class="required">*</span></label>
+                        <input type="text" id="exam-department-name" placeholder="请输入体检科室名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <input type="text" id="exam-department-remark" placeholder="可填写科室说明">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeExamDepartmentModal()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="saveExamDepartment()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 体检项目 / 子项编辑模态框 -->
+    <div id="exam-project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="exam-project-modal-title">新增体检子项</h3>
+                <span class="modal-close" onclick="closeExamProjectModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="exam-project-form">
+                    <input type="hidden" id="exam-project-modal-mode">
+                    <input type="hidden" id="exam-project-edit-index">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>体检科室</label>
+                            <input type="text" id="exam-project-form-department" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>检查类别 <span class="required">*</span></label>
+                            <select id="exam-project-form-category" required>
+                                <option value="常规检查">常规检查</option>
+                                <option value="物理检查">物理检查</option>
+                                <option value="一般检查">一般检查</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>体检项 <span class="required">*</span></label>
+                            <input type="text" id="exam-project-form-item" placeholder="如：肝功九项" required>
+                        </div>
+                        <div class="form-group">
+                            <label>体检子项 <span class="required">*</span></label>
+                            <input type="text" id="exam-project-form-subitem" placeholder="如：[ALT]谷丙转氨酶" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>输入类型</label>
+                            <div class="input-type-multiselect" id="exam-project-input-type-select">
+                                <button type="button" class="input-type-trigger" id="exam-project-input-type-button" onclick="toggleExamInputTypeMenu()">填写</button>
+                                <div class="input-type-menu" id="exam-project-input-type-menu">
+                                    <label><input type="checkbox" class="exam-input-type-checkbox" value="填写" checked> 填写</label>
+                                    <label><input type="checkbox" class="exam-input-type-checkbox" value="下拉"> 下拉</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row" id="exam-project-fill-fields">
+                        <div class="form-group">
+                            <label>数据类型</label>
+                            <select id="exam-project-form-data-type">
+                                <option value="数字">数字</option>
+                                <option value="文本">文本</option>
+                                <option value="枚举">枚举</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>单位</label>
+                            <input type="text" id="exam-project-form-unit" placeholder="如：U/L、mmol/L">
+                        </div>
+                    </div>
+                    <div class="form-row" id="exam-project-fill-reference-fields">
+                        <div class="form-group">
+                            <label>参考值/正常范围</label>
+                            <input type="text" id="exam-project-form-reference" placeholder="如：5 ~ 44">
+                        </div>
+                        <div class="form-group">
+                            <label>诊断说明</label>
+                            <input type="text" id="exam-project-form-remark" placeholder="可填写异常提示或诊断说明">
+                        </div>
+                    </div>
+                    <div class="form-row" id="exam-project-dropdown-fields" style="display: none;">
+                        <div class="form-group full-width">
+                            <label>下拉选择项</label>
+                            <textarea id="exam-project-form-options" rows="4" placeholder="使用,或者换行输入多个下拉选项"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeExamProjectModal()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="saveExamProjectForm()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 套餐编辑模态框 -->
+    <div id="package-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑套餐</h3>
+                <span class="modal-close" onclick="closePackageModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="package-form">
+                    <div class="form-group">
+                        <label>套餐名称</label>
+                        <input type="text" name="packageName" placeholder="请输入套餐名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label>适用性别</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="gender" value="all" checked> 通用</label>
+                            <label><input type="radio" name="gender" value="male"> 男性</label>
+                            <label><input type="radio" name="gender" value="female"> 女性</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>包含科室及检查项</label>
+                        <p class="package-tier-hint">第一层：体检科室　第二层：检查类别　第三层：体检项</p>
+                        <div class="department-list" id="package-department-list">
+                            <!-- 体格检查 -->
+                            <div class="department-item" data-dept="体格检查">
+                                <div class="department-header">
+                                    <input type="checkbox" id="pkg-dept-tg" class="dept-checkbox" value="体格检查" data-dept="体格检查">
+                                    <label for="pkg-dept-tg" class="dept-label">体格检查</label>
+                                </div>
+                                <div class="dept-categories">
+                                    <div class="exam-category-block" data-dept="体格检查" data-category="一般检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-tg-yb" class="category-checkbox" data-dept="体格检查" data-category="一般检查">
+                                            <label for="pkg-cat-tg-yb" class="category-label">一般检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="体格检查" data-category="一般检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-yb-1" class="exam-checkbox" value="身高" data-dept="体格检查" data-category="一般检查"><label for="pkg-ex-tg-yb-1">身高</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-yb-2" class="exam-checkbox" value="体重" data-dept="体格检查" data-category="一般检查"><label for="pkg-ex-tg-yb-2">体重</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-yb-3" class="exam-checkbox" value="血压" data-dept="体格检查" data-category="一般检查"><label for="pkg-ex-tg-yb-3">血压</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-yb-4" class="exam-checkbox" value="脉率" data-dept="体格检查" data-category="一般检查"><label for="pkg-ex-tg-yb-4">脉率</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="体格检查" data-category="物理检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-tg-wl" class="category-checkbox" data-dept="体格检查" data-category="物理检查">
+                                            <label for="pkg-cat-tg-wl" class="category-label">物理检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="体格检查" data-category="物理检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-wl-1" class="exam-checkbox" value="内科检查" data-dept="体格检查" data-category="物理检查"><label for="pkg-ex-tg-wl-1">内科检查</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-wl-2" class="exam-checkbox" value="外科检查" data-dept="体格检查" data-category="物理检查"><label for="pkg-ex-tg-wl-2">外科检查</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-wl-3" class="exam-checkbox" value="眼科检查" data-dept="体格检查" data-category="物理检查"><label for="pkg-ex-tg-wl-3">眼科检查</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-wl-4" class="exam-checkbox" value="口腔检查" data-dept="体格检查" data-category="物理检查"><label for="pkg-ex-tg-wl-4">口腔检查</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-tg-wl-5" class="exam-checkbox" value="妇科检查" data-dept="体格检查" data-category="物理检查"><label for="pkg-ex-tg-wl-5">妇科检查</label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 实验室检查 -->
+                            <div class="department-item" data-dept="实验室检查">
+                                <div class="department-header">
+                                    <input type="checkbox" id="pkg-dept-sys" class="dept-checkbox" value="实验室检查" data-dept="实验室检查">
+                                    <label for="pkg-dept-sys" class="dept-label">实验室检查</label>
+                                </div>
+                                <div class="dept-categories">
+                                    <div class="exam-category-block" data-dept="实验室检查" data-category="常规检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-sys-cg" class="category-checkbox" data-dept="实验室检查" data-category="常规检查">
+                                            <label for="pkg-cat-sys-cg" class="category-label">常规检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="实验室检查" data-category="常规检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-cg-1" class="exam-checkbox" value="血常规" data-dept="实验室检查" data-category="常规检查"><label for="pkg-ex-sys-cg-1">血常规</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-cg-2" class="exam-checkbox" value="尿常规" data-dept="实验室检查" data-category="常规检查"><label for="pkg-ex-sys-cg-2">尿常规</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-cg-3" class="exam-checkbox" value="粪便常规" data-dept="实验室检查" data-category="常规检查"><label for="pkg-ex-sys-cg-3">粪便常规</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="实验室检查" data-category="生化检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-sys-sh" class="category-checkbox" data-dept="实验室检查" data-category="生化检查">
+                                            <label for="pkg-cat-sys-sh" class="category-label">生化检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="实验室检查" data-category="生化检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-1" class="exam-checkbox" value="肝功九项" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-1">肝功九项</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-2" class="exam-checkbox" value="肾功三项" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-2">肾功三项</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-3" class="exam-checkbox" value="血脂四项" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-3">血脂四项</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-4" class="exam-checkbox" value="血糖" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-4">血糖</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-5" class="exam-checkbox" value="糖化血红蛋白" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-5">糖化血红蛋白</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-sh-6" class="exam-checkbox" value="其他" data-dept="实验室检查" data-category="生化检查"><label for="pkg-ex-sys-sh-6">其他</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="实验室检查" data-category="免疫/感染">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-sys-my" class="category-checkbox" data-dept="实验室检查" data-category="免疫/感染">
+                                            <label for="pkg-cat-sys-my" class="category-label">免疫/感染</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="实验室检查" data-category="免疫/感染">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-my-1" class="exam-checkbox" value="乙肝/丙肝" data-dept="实验室检查" data-category="免疫/感染"><label for="pkg-ex-sys-my-1">乙肝/丙肝</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="实验室检查" data-category="肿瘤筛查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-sys-zl" class="category-checkbox" data-dept="实验室检查" data-category="肿瘤筛查">
+                                            <label for="pkg-cat-sys-zl" class="category-label">肿瘤筛查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="实验室检查" data-category="肿瘤筛查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-zl-1" class="exam-checkbox" value="肺癌相关" data-dept="实验室检查" data-category="肿瘤筛查"><label for="pkg-ex-sys-zl-1">肺癌相关</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-sys-zl-2" class="exam-checkbox" value="肝癌相关" data-dept="实验室检查" data-category="肿瘤筛查"><label for="pkg-ex-sys-zl-2">肝癌相关</label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 辅助检查 -->
+                            <div class="department-item" data-dept="辅助检查">
+                                <div class="department-header">
+                                    <input type="checkbox" id="pkg-dept-fz" class="dept-checkbox" value="辅助检查" data-dept="辅助检查">
+                                    <label for="pkg-dept-fz" class="dept-label">辅助检查</label>
+                                </div>
+                                <div class="dept-categories">
+                                    <div class="exam-category-block" data-dept="辅助检查" data-category="心电图">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-fz-xd" class="category-checkbox" data-dept="辅助检查" data-category="心电图">
+                                            <label for="pkg-cat-fz-xd" class="category-label">心电图</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="辅助检查" data-category="心电图">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-xd-1" class="exam-checkbox" value="十二导联" data-dept="辅助检查" data-category="心电图"><label for="pkg-ex-fz-xd-1">十二导联</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="辅助检查" data-category="超声检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-fz-cs" class="category-checkbox" data-dept="辅助检查" data-category="超声检查">
+                                            <label for="pkg-cat-fz-cs" class="category-label">超声检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="辅助检查" data-category="超声检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-cs-1" class="exam-checkbox" value="腹部彩超" data-dept="辅助检查" data-category="超声检查"><label for="pkg-ex-fz-cs-1">腹部彩超</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-cs-2" class="exam-checkbox" value="甲状腺彩超" data-dept="辅助检查" data-category="超声检查"><label for="pkg-ex-fz-cs-2">甲状腺彩超</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="辅助检查" data-category="影像检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-fz-yx" class="category-checkbox" data-dept="辅助检查" data-category="影像检查">
+                                            <label for="pkg-cat-fz-yx" class="category-label">影像检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="辅助检查" data-category="影像检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-yx-1" class="exam-checkbox" value="经颅多普勒" data-dept="辅助检查" data-category="影像检查"><label for="pkg-ex-fz-yx-1">经颅多普勒</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="辅助检查" data-category="内镜检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-fz-nj" class="category-checkbox" data-dept="辅助检查" data-category="内镜检查">
+                                            <label for="pkg-cat-fz-nj" class="category-label">内镜检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="辅助检查" data-category="内镜检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-nj-1" class="exam-checkbox" value="电子胃镜" data-dept="辅助检查" data-category="内镜检查"><label for="pkg-ex-fz-nj-1">电子胃镜</label></div>
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-nj-2" class="exam-checkbox" value="电子肠镜" data-dept="辅助检查" data-category="内镜检查"><label for="pkg-ex-fz-nj-2">电子肠镜</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="exam-category-block" data-dept="辅助检查" data-category="专项检查">
+                                        <div class="category-header">
+                                            <input type="checkbox" id="pkg-cat-fz-zx" class="category-checkbox" data-dept="辅助检查" data-category="专项检查">
+                                            <label for="pkg-cat-fz-zx" class="category-label">专项检查</label>
+                                        </div>
+                                        <div class="exam-items-list" data-dept="辅助检查" data-category="专项检查">
+                                            <div class="exam-item"><input type="checkbox" id="pkg-ex-fz-zx-1" class="exam-checkbox" value="幽门螺旋杆菌" data-dept="辅助检查" data-category="专项检查"><label for="pkg-ex-fz-zx-1">幽门螺旋杆菌</label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>套餐状态</label>
+                        <select name="status">
+                            <option value="active">启用</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePackageModal()">取消</button>
+                <button class="btn btn-primary" onclick="savePackage()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 患者详情模态框 -->
+    <div id="patient-detail-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>患者详细信息</h3>
+                <span class="modal-close" onclick="closePatientDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- 查看模式 -->
+                <div id="patient-view-mode" class="patient-detail-container">
+                    <!-- 基础个人信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">基础个人信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>姓名：</label>
+                                <span id="detail-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>性别：</label>
+                                <span id="detail-gender">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>出生日期：</label>
+                                <span id="detail-birthdate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>年龄：</label>
+                                <span id="detail-age">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>联系电话：</label>
+                                <span class="sensitive-info">
+                                    <span id="detail-phone">-</span>
+                                    <span class="eye-icon" onclick="toggleSensitiveInfo('phone', 'detail')" title="点击查看完整信息">👁️</span>
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <label>婚姻状况：</label>
+                                <span id="detail-marital">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 身份与账户信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">身份与账户信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>证件类型：</label>
+                                <span id="detail-id-type">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>证件号码：</label>
+                                <span class="sensitive-info">
+                                    <span id="detail-id-number">-</span>
+                                    <span class="eye-icon" onclick="toggleSensitiveInfo('id-number', 'detail')" title="点击查看完整信息">👁️</span>
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <label>客户来源：</label>
+                                <span id="detail-source">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>所属单位：</label>
+                                <span id="detail-company">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>会员等级/标签：</label>
+                                <span id="detail-member-level">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>系统唯一ID：</label>
+                                <span id="detail-pid">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 业务相关信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">业务相关信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>注册时间：</label>
+                                <span id="detail-register-time">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>最后一次体检日期：</label>
+                                <span id="detail-last-exam">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>累计体检次数：</label>
+                                <span id="detail-exam-count">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>账号状态：</label>
+                                <span id="detail-status">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 扩展健康档案 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">扩展健康档案</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item full-width">
+                                <label>过敏史：</label>
+                                <span id="detail-allergy">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>既往史/家族史：</label>
+                                <span id="detail-history">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>血型：</label>
+                                <span id="detail-blood-type">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>身高：</label>
+                                <span id="detail-height">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>体重：</label>
+                                <span id="detail-weight">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 编辑模式 -->
+                <div id="patient-edit-mode" class="patient-detail-container" style="display: none;">
+                    <form id="patient-edit-form">
+                        <!-- 基础个人信息 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">基础个人信息</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>姓名 <span class="required">*</span></label>
+                                    <input type="text" name="edit-name" id="edit-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>性别 <span class="required">*</span></label>
+                                    <select name="edit-gender" id="edit-gender" required>
+                                        <option value="男">男</option>
+                                        <option value="女">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>出生日期</label>
+                                    <input type="date" name="edit-birthdate" id="edit-birthdate" readonly>
+                                    <small class="form-hint">将从身份证号自动提取</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>年龄 <span class="required">*</span></label>
+                                    <input type="number" name="edit-age" id="edit-age" min="0" max="150" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>联系电话 <span class="required">*</span></label>
+                                    <div class="input-with-eye">
+                                        <input type="tel" name="edit-phone" id="edit-phone" required pattern="[0-9]{11}">
+                                        <span class="eye-icon" onclick="toggleSensitiveInfo('phone', 'edit')" title="点击查看完整信息">👁️</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>婚姻状况</label>
+                                    <select name="edit-marital" id="edit-marital">
+                                        <option value="未婚">未婚</option>
+                                        <option value="已婚">已婚</option>
+                                        <option value="离异">离异</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 身份与账户信息 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">身份与账户信息</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>证件类型</label>
+                                    <select name="edit-id-type" id="edit-id-type">
+                                        <option value="身份证">身份证</option>
+                                        <option value="护照">护照</option>
+                                        <option value="军官证">军官证</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>证件号码 <span class="required">*</span></label>
+                                    <div class="input-with-eye">
+                                        <input type="text" name="edit-id-number" id="edit-id-number" required>
+                                        <span class="eye-icon" onclick="toggleSensitiveInfo('id-number', 'edit')" title="点击查看完整信息">👁️</span>
+                                    </div>
+                                    <small class="form-hint">输入身份证号后将自动提取出生日期</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>客户来源</label>
+                                    <select name="edit-source" id="edit-source">
+                                        <option value="个人体检">个人体检</option>
+                                        <option value="单位集体体检">单位集体体检</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>所属单位</label>
+                                    <input type="text" name="edit-company" id="edit-company" placeholder="单位集体体检时填写">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>会员等级/标签</label>
+                                    <select name="edit-member-level" id="edit-member-level">
+                                        <option value="普通会员">普通会员</option>
+                                        <option value="VIP">VIP</option>
+                                        <option value="复检客户">复检客户</option>
+                                        <option value="企业高管">企业高管</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>账号状态</label>
+                                    <select name="edit-status" id="edit-status">
+                                        <option value="正常">正常</option>
+                                        <option value="禁用">禁用</option>
+                                        <option value="黑名单">黑名单</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>系统唯一ID</label>
+                                    <input type="text" name="edit-pid" id="edit-pid" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 业务相关信息（只读） -->
+                        <div class="detail-section">
+                            <h4 class="section-title">业务相关信息</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>注册时间</label>
+                                    <input type="text" name="edit-register-time" id="edit-register-time" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>最后一次体检日期</label>
+                                    <input type="text" name="edit-last-exam" id="edit-last-exam" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>累计体检次数</label>
+                                    <input type="text" name="edit-exam-count" id="edit-exam-count" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 扩展健康档案 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">扩展健康档案</h4>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>过敏史</label>
+                                    <input type="text" name="edit-allergy" id="edit-allergy">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>既往史/家族史</label>
+                                    <textarea name="edit-history" id="edit-history" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>血型</label>
+                                    <select name="edit-blood-type" id="edit-blood-type">
+                                        <option value="">请选择</option>
+                                        <option value="A型，Rh阳性">A型，Rh阳性</option>
+                                        <option value="A型，Rh阴性">A型，Rh阴性</option>
+                                        <option value="B型，Rh阳性">B型，Rh阳性</option>
+                                        <option value="B型，Rh阴性">B型，Rh阴性</option>
+                                        <option value="AB型，Rh阳性">AB型，Rh阳性</option>
+                                        <option value="AB型，Rh阴性">AB型，Rh阴性</option>
+                                        <option value="O型，Rh阳性">O型，Rh阳性</option>
+                                        <option value="O型，Rh阴性">O型，Rh阴性</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>身高</label>
+                                    <input type="number" name="edit-height" id="edit-height" placeholder="单位：cm" min="0" max="300">
+                                </div>
+                                <div class="form-group">
+                                    <label>体重</label>
+                                    <input type="number" name="edit-weight" id="edit-weight" placeholder="单位：kg" min="0" max="500">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="patient-view-buttons">
+                    <button class="btn btn-secondary" onclick="closePatientDetailModal()">关闭</button>
+                    <button class="btn btn-primary" onclick="enablePatientEdit()">编辑</button>
+                </div>
+                <div id="patient-edit-buttons" style="display: none;">
+                    <button class="btn btn-secondary" onclick="cancelPatientEdit()">取消</button>
+                    <button class="btn btn-primary" onclick="savePatientEdit()">完成</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增患者模态框 -->
+    <div id="add-patient-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>新增患者</h3>
+                <span class="modal-close" onclick="closeAddPatientModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="patient-form">
+                    <!-- 基础个人信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">基础个人信息</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>姓名 <span class="required">*</span></label>
+                                <input type="text" name="name" placeholder="请输入真实姓名" required>
+                            </div>
+                            <div class="form-group">
+                                <label>性别 <span class="required">*</span></label>
+                                <select name="gender" required>
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>出生日期</label>
+                                <input type="date" name="birthdate" id="patient-birthdate" readonly>
+                                <small class="form-hint">将从身份证号自动提取</small>
+                            </div>
+                            <div class="form-group">
+                                <label>年龄 <span class="required">*</span></label>
+                                <input type="number" name="age" id="patient-age" placeholder="请输入年龄" min="0" max="150" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>联系电话 <span class="required">*</span></label>
+                                <input type="tel" name="phone" placeholder="请输入手机号" required pattern="[0-9]{11}">
+                            </div>
+                            <div class="form-group">
+                                <label>婚姻状况</label>
+                                <select name="marital">
+                                    <option value="">请选择</option>
+                                    <option value="未婚">未婚</option>
+                                    <option value="已婚">已婚</option>
+                                    <option value="离异">离异</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 身份与账户信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">身份与账户信息</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>证件类型</label>
+                                <select name="idType" id="id-type-select">
+                                    <option value="身份证">身份证</option>
+                                    <option value="护照">护照</option>
+                                    <option value="军官证">军官证</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>证件号码 <span class="required">*</span></label>
+                                <input type="text" name="idNumber" id="patient-id-number" placeholder="请输入证件号码" required>
+                                <small class="form-hint">输入身份证号后将自动提取出生日期</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>客户来源</label>
+                                <select name="source">
+                                    <option value="个人体检">个人体检</option>
+                                    <option value="单位集体体检">单位集体体检</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>所属单位</label>
+                                <input type="text" name="company" placeholder="单位集体体检时填写，格式：公司名称 / 部门">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>会员等级/标签</label>
+                                <select name="memberLevel">
+                                    <option value="普通会员">普通会员</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="复检客户">复检客户</option>
+                                    <option value="企业高管">企业高管</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>账号状态</label>
+                                <select name="status">
+                                    <option value="正常">正常</option>
+                                    <option value="禁用">禁用</option>
+                                    <option value="黑名单">黑名单</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 扩展健康档案 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">扩展健康档案（可选）</h4>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>过敏史</label>
+                                <input type="text" name="allergy" placeholder="请输入过敏史，如：青霉素过敏">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>既往史/家族史</label>
+                                <textarea name="history" rows="3" placeholder="请输入既往史和家族史，如：无特殊病史，家族无遗传病史"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>血型</label>
+                                <select name="bloodType">
+                                    <option value="">请选择</option>
+                                    <option value="A型，Rh阳性">A型，Rh阳性</option>
+                                    <option value="A型，Rh阴性">A型，Rh阴性</option>
+                                    <option value="B型，Rh阳性">B型，Rh阳性</option>
+                                    <option value="B型，Rh阴性">B型，Rh阴性</option>
+                                    <option value="AB型，Rh阳性">AB型，Rh阳性</option>
+                                    <option value="AB型，Rh阴性">AB型，Rh阴性</option>
+                                    <option value="O型，Rh阳性">O型，Rh阳性</option>
+                                    <option value="O型，Rh阴性">O型，Rh阴性</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>身高</label>
+                                <input type="number" name="height" placeholder="单位：cm" min="0" max="300">
+                            </div>
+                            <div class="form-group">
+                                <label>体重</label>
+                                <input type="number" name="weight" placeholder="单位：kg" min="0" max="500">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddPatientModal()">取消</button>
+                <button class="btn btn-primary" onclick="savePatient()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预约详情模态框 -->
+    <div id="appointment-detail-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>预约详情</h3>
+                <span class="modal-close" onclick="closeAppointmentDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- 查看模式 -->
+                <div id="appointment-view-mode" class="patient-detail-container">
+                    <!-- 预约编号 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">预约信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>预约编号：</label>
+                                <span id="appointment-id">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>预约日期：</label>
+                                <span id="appointment-date">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>预约时间：</label>
+                                <span id="appointment-time">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户基本信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">用户基本信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>姓名：</label>
+                                <span id="appointment-patient-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>性别：</label>
+                                <span id="appointment-patient-gender">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>年龄：</label>
+                                <span id="appointment-patient-age">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>联系电话：</label>
+                                <span class="sensitive-info">
+                                    <span id="appointment-patient-phone">-</span>
+                                    <span class="eye-icon" onclick="toggleSensitiveInfo('appointment-phone', 'detail')" title="点击查看完整信息">👁️</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 套餐信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">套餐信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item full-width">
+                                <label>套餐名称：</label>
+                                <span id="appointment-package-name">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>套餐包含科室：</label>
+                                <div id="appointment-package-departments" class="department-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 套餐外体检项 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">套餐外体检项</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item full-width">
+                                <label>患者选择的套餐外项目：</label>
+                                <div id="appointment-optional-departments" class="department-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 编辑模式 -->
+                <div id="appointment-edit-mode" class="patient-detail-container" style="display: none;">
+                    <form id="appointment-edit-form">
+                        <!-- 预约信息 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">预约信息</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <label>预约编号：</label>
+                                    <span id="appointment-edit-id">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>预约日期 <span class="required">*</span></label>
+                                    <input type="date" id="appointment-edit-date" name="appointmentDate" required>
+                                </div>
+                                <div class="detail-item">
+                                    <label>预约时间 <span class="required">*</span></label>
+                                    <select id="appointment-edit-time" name="appointmentTime" required>
+                                        <option value="">请选择时间</option>
+                                        <option value="08:00-09:00">08:00-09:00</option>
+                                        <option value="09:00-10:00">09:00-10:00</option>
+                                        <option value="10:00-11:00">10:00-11:00</option>
+                                        <option value="11:00-12:00">11:00-12:00</option>
+                                        <option value="14:00-15:00">14:00-15:00</option>
+                                        <option value="15:00-16:00">15:00-16:00</option>
+                                        <option value="16:00-17:00">16:00-17:00</option>
+                                        <option value="17:00-18:00">17:00-18:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 用户基本信息（只读） -->
+                        <div class="detail-section">
+                            <h4 class="section-title">用户基本信息</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <label>姓名：</label>
+                                    <span id="appointment-edit-patient-name">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>性别：</label>
+                                    <span id="appointment-edit-patient-gender">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>年龄：</label>
+                                    <span id="appointment-edit-patient-age">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>联系电话：</label>
+                                    <span id="appointment-edit-patient-phone">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 套餐信息 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">套餐信息</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item full-width">
+                                    <label>套餐名称 <span class="required">*</span></label>
+                                    <select id="appointment-edit-package" name="packageId" required onchange="onAppointmentPackageChange()">
+                                        <option value="">请选择套餐</option>
+                                    </select>
+                                </div>
+                                <div class="detail-item full-width">
+                                    <label>套餐包含科室：</label>
+                                    <div id="appointment-edit-package-departments" class="department-tags"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 套餐外体检项 -->
+                        <div class="detail-section">
+                            <h4 class="section-title">套餐外体检项（可选）</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item full-width">
+                                    <label>可选检查项：</label>
+                                    <div id="appointment-edit-optional-departments" class="department-checkbox-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="appointment-view-buttons">
+                    <button class="btn btn-secondary" onclick="closeAppointmentDetailModal()">关闭</button>
+                    <button class="btn btn-primary" onclick="editAppointment()">编辑</button>
+                </div>
+                <div id="appointment-edit-buttons" style="display: none;">
+                    <button class="btn btn-secondary" onclick="cancelEditAppointment()">取消</button>
+                    <button class="btn btn-primary" onclick="saveAppointmentEdit()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增预约模态框 -->
+    <div id="add-appointment-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>新增预约</h3>
+                <span class="modal-close" onclick="closeAddAppointmentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="appointment-form">
+                    <!-- 患者选择 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">选择患者</h4>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>选择患者 <span class="required">*</span></label>
+                                <div class="patient-select-wrapper">
+                                    <input type="text" id="patient-search-input" placeholder="搜索患者姓名/手机号..." 
+                                           oninput="filterPatients(this.value)" 
+                                           onfocus="showPatientDropdown()">
+                                    <div id="patient-dropdown" class="patient-dropdown" style="display: none;">
+                                        <div id="patient-list"></div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selected-patient-id" name="patientId" required>
+                                <div id="selected-patient-info" class="selected-patient-info" style="display: none;">
+                                    <span id="selected-patient-name"></span>
+                                    <button type="button" class="btn-remove" onclick="clearSelectedPatient()">×</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <button type="button" class="btn btn-secondary" onclick="showAddPatientModalFromAppointment()">
+                                    + 新建患者
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 套餐选择 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">选择套餐</h4>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>套餐 <span class="required">*</span></label>
+                                <select name="packageId" id="appointment-package-select" required onchange="onPackageChange()">
+                                    <option value="">请选择套餐</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>套餐包含的检查项：</label>
+                                <div id="package-departments-display" class="department-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 套餐外体检项 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">套餐外体检项（可选）</h4>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>可选检查项：</label>
+                                <div id="optional-departments-list" class="department-checkbox-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 预约时间 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">预约时间</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>预约日期 <span class="required">*</span></label>
+                                <input type="date" name="appointmentDate" id="appointment-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>预约时间 <span class="required">*</span></label>
+                                <select name="appointmentTime" id="appointment-time" required>
+                                    <option value="">请选择时间</option>
+                                    <option value="08:00-09:00">08:00-09:00</option>
+                                    <option value="09:00-10:00">09:00-10:00</option>
+                                    <option value="10:00-11:00">10:00-11:00</option>
+                                    <option value="11:00-12:00">11:00-12:00</option>
+                                    <option value="14:00-15:00">14:00-15:00</option>
+                                    <option value="15:00-16:00">15:00-16:00</option>
+                                    <option value="16:00-17:00">16:00-17:00</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddAppointmentModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveAppointment()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 内科检查详情模态框 -->
+    <div id="internal-medicine-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>内科检查</h3>
+                <span class="modal-close" onclick="closeInternalMedicineModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- 查看模式 -->
+                <div id="internal-medicine-view-mode" class="patient-detail-container">
+                    <div class="detail-section">
+                        <h4 class="section-title">检查信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>体检编号：</label>
+                                <span id="im-exam-id">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>患者姓名：</label>
+                                <span id="im-patient-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>检查科室：</label>
+                                <span id="im-department">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>录入状态：</label>
+                                <span id="im-status">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4 class="section-title">上传图片</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item full-width">
+                                <div id="im-images-container" class="image-container"></div>
+                                <div id="im-ai-parse-section" style="display: none; margin-top: 15px;">
+                                    <button type="button" class="btn btn-primary" onclick="startAIParse()">
+                                        开始AI解析
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4 class="section-title">检查数据</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>心率：</label>
+                                <span id="im-heart-rate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>心律：</label>
+                                <span id="im-heart-rhythm">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>心杂音：</label>
+                                <span id="im-heart-murmur">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>肺部听诊：</label>
+                                <span id="im-lung-auscultation">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>肝/脾触诊：</label>
+                                <span id="im-liver-spleen">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>病史记录：</label>
+                                <span id="im-medical-history">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>医生小结：</label>
+                                <span id="im-doctor-summary">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AI解析结果（仅在AI解析完成时显示） -->
+                    <div id="im-ai-result-section" class="detail-section" style="display: none;">
+                        <h4 class="section-title">AI解析结果</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item full-width">
+                                <label>AI解析结果：</label>
+                                <span id="im-ai-result">-</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>建议：</label>
+                                <span id="im-ai-suggestion">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4 class="section-title">人员信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item signature-item">
+                                <label>主检医生：</label>
+                                <span class="signature-line" id="im-chief-doctor">-</span>
+                            </div>
+                            <div class="detail-item signature-item">
+                                <label>录入员：</label>
+                                <span class="signature-line" id="im-recorder">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 编辑模式 -->
+                <div id="internal-medicine-edit-mode" class="patient-detail-container" style="display: none;">
+                    <form id="internal-medicine-form">
+                        <div class="detail-section">
+                            <h4 class="section-title">检查信息</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>体检编号：</label>
+                                    <input type="text" id="im-edit-exam-id" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>患者姓名：</label>
+                                    <input type="text" id="im-edit-patient-name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4 class="section-title">上传图片</h4>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <div class="image-upload-container">
+                                        <input type="file" id="im-image-upload" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+                                        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('im-image-upload').click()">
+                                                + 上传图片
+                                            </button>
+                                            <button type="button" id="im-edit-ai-parse-btn" class="btn btn-primary" onclick="startAIParse()" style="display: none;">
+                                                开始AI解析
+                                            </button>
+                                        </div>
+                                        <div id="im-edit-images-container" class="image-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4 class="section-title">检查数据</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>心率 (bpm) <span class="required">*</span></label>
+                                    <input type="number" name="heartRate" id="im-edit-heart-rate" placeholder="请输入心率" min="0" max="300" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>心律 <span class="required">*</span></label>
+                                    <select name="heartRhythm" id="im-edit-heart-rhythm" required>
+                                        <option value="">请选择</option>
+                                        <option value="齐">齐</option>
+                                        <option value="不齐">不齐</option>
+                                        <option value="绝对不齐">绝对不齐</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>心杂音</label>
+                                    <select name="heartMurmur" id="im-edit-heart-murmur">
+                                        <option value="无">无</option>
+                                        <option value="有">有</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>肺部听诊</label>
+                                    <input type="text" name="lungAuscultation" id="im-edit-lung-auscultation" 
+                                           value="双肺呼吸音清，未闻及干湿性啰音" placeholder="请输入肺部听诊结果">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>肝/脾触诊</label>
+                                    <input type="text" name="liverSpleen" id="im-edit-liver-spleen" 
+                                           value="肋下未触及" placeholder="请输入肝/脾触诊结果">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>病史记录</label>
+                                    <textarea name="medicalHistory" id="im-edit-medical-history" rows="4" placeholder="请输入病史记录"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>医生小结</label>
+                                    <textarea name="doctorSummary" id="im-edit-doctor-summary" rows="4" placeholder="自动汇总上述异常项，也可手动编辑"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4 class="section-title">人员信息</h4>
+                            <div class="form-row">
+                                <div class="form-group signature-input-group">
+                                    <label>主检医生：</label>
+                                    <input type="text" name="chiefDoctor" id="im-edit-chief-doctor" class="signature-input" placeholder="">
+                                </div>
+                                <div class="form-group signature-input-group">
+                                    <label>录入员：</label>
+                                    <input type="text" id="im-edit-recorder" class="signature-input" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="internal-medicine-view-buttons">
+                    <button class="btn btn-secondary" onclick="closeInternalMedicineModal()">关闭</button>
+                    <button class="btn btn-primary" id="internal-medicine-edit-btn" onclick="enableInternalMedicineEdit()">编辑</button>
+                    <button class="btn btn-primary" id="internal-medicine-confirm-btn" onclick="confirmAIResult()" style="display: none;">确认结果</button>
+                </div>
+                <div id="internal-medicine-edit-buttons" style="display: none;">
+                    <button class="btn btn-secondary" onclick="printInternalMedicine()">打印</button>
+                    <button class="btn btn-secondary" onclick="cancelInternalMedicineEdit()">取消</button>
+                    <button class="btn btn-primary" onclick="saveInternalMedicine()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报告查看模态框 -->
+    <div id="report-view-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>体检报告详情</h3>
+                <span class="modal-close" onclick="closeReportViewModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="patient-detail-container">
+                    <!-- 报告基本信息 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">报告信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>报告编号：</label>
+                                <span id="report-view-id">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>患者姓名：</label>
+                                <span id="report-view-patient-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>套餐名称：</label>
+                                <span id="report-view-package-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>体检日期：</label>
+                                <span id="report-view-exam-date">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 检查项结果 -->
+                    <div class="detail-section">
+                        <h4 class="section-title">检查项录入结果</h4>
+                        <div id="report-examinations-container">
+                            <!-- 动态生成检查项列表 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="report-confirm-audit-btn" style="display: none;">确认审核</button>
+                <button class="btn btn-secondary" onclick="closeReportViewModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 完整报告查看模态框 -->
+    <div id="complete-report-modal" class="modal">
+        <div class="modal-content modal-large" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h3>完整体检报告</h3>
+                <span class="modal-close" onclick="closeCompleteReportModal()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow-y: auto; max-height: calc(90vh - 80px);">
+                <div id="complete-report-content" style="background: white; padding: 40px;">
+                    <!-- 报告头部 -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px;">
+                        <div style="display: flex; align-items: center;">
+                            <h2 style="color: #d32f2f; margin: 0; font-size: 24px; margin-right: 20px;">体检中心</h2>
+                            <span style="font-size: 14px; color: #333;">健康体检报告 MEDICAL EXAMINATION REPORT</span>
+                        </div>
+                        <div style="text-align: right; font-size: 12px; color: #666;">
+                            <div>患者名称 <span id="cr-patient-name">-</span></div>
+                            <div>用户ID <span id="cr-user-id">-</span></div>
+                            <div>体检号 <span id="cr-exam-number">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 报告标题 -->
+                    <div style="text-align: center; margin: 40px 0;">
+                        <h1 style="font-size: 36px; font-weight: bold; color: #333; margin: 0;">健康体检报告</h1>
+                        <p style="font-size: 18px; color: #666; margin: 10px 0 0 0;">MEDICAL EXAMINATION REPORT</p>
+                    </div>
+
+                    <!-- 患者和项目信息 -->
+                    <div style="display: flex; justify-content: space-between; margin: 40px 0;">
+                        <!-- 左侧：患者信息 -->
+                        <div style="flex: 1; padding-right: 30px;">
+                            <div style="margin-bottom: 20px;">
+                                <div style="width: 120px; height: 120px; background: #e3f2fd; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                    <div style="width: 80px; height: 80px; background: #90caf9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px;">👤</div>
+                                </div>
+                                <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px;" id="cr-patient-name-gender">患者名称(男)</div>
+                            </div>
+                            <div style="font-size: 14px; line-height: 2;">
+                                <div>单位 <span id="cr-company">-</span></div>
+                                <div>联系电话 <span id="cr-phone">-</span></div>
+                                <div>员工号 <span id="cr-employee-id">-</span></div>
+                                <div>卡号 <span id="cr-card-number">-</span></div>
+                                <div>递送地址 <span id="cr-delivery-address">-</span></div>
+                                <div>递送方式 <span id="cr-delivery-method">电子报告</span></div>
+                                <div>体检号 <span id="cr-exam-number-left">-</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧：项目信息 -->
+                        <div style="flex: 1; padding-left: 30px;">
+                            <div style="font-size: 14px; line-height: 2; margin-bottom: 20px;">
+                                <div>项目号 <span id="cr-project-number">-</span></div>
+                                <div>项目简称 <span id="cr-project-name">-</span></div>
+                                <div>类别 <span id="cr-category">员工</span></div>
+                                <div>部门 <span id="cr-department">-</span></div>
+                            </div>
+                            <div style="margin: 20px 0;">
+                                <div style="width: 200px; height: 60px; background: #f5f5f5; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                    <span style="color: #999; font-size: 12px;">条形码</span>
+                                </div>
+                            </div>
+                            <div style="font-size: 14px; line-height: 2;">
+                                <div>检查日期 <span id="cr-exam-date">-</span></div>
+                            </div>
+                            <div style="margin-top: 20px; font-size: 12px; color: #666;">
+                                <div id="cr-clinic-name">体检中心门诊部</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 底部信息 - 第一页内容的一部分 -->
+                    <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #e0e0e0;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="flex: 1; font-size: 11px; color: #666; line-height: 1.8;">
+                                <div style="margin-bottom: 10px;" id="cr-clinic-name-bottom">体检中心门诊部</div>
+                                <div>全国统一报告解读专线: 400-000-0000</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="width: 100px; height: 100px; background: #f5f5f5; border: 1px solid #ddd; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #999; font-size: 10px;">二维码</span>
+                                </div>
+                                <div style="font-size: 11px; color: #666;">扫码下载APP</div>
+                                <div style="font-size: 11px; color: #666;">www.example.com</div>
+                            </div>
+                            <div style="flex: 1; text-align: right; font-size: 11px; color: #666;">
+                                <div style="margin-bottom: 20px;">注:★自费增项</div>
+                                <div style="margin-top: 40px;">
+                                    <div style="margin-bottom: 10px;">体检中心健康体检管理集团有限公司版权所有</div>
+                                    <div style="font-size: 10px; line-height: 1.8; text-align: left;">
+                                        体检中心集团是中国领先的高端连锁健康体检与健康管理集团，提供健康体检、疾病检测、齿科服务、私人医生、职场医疗、疫苗接种、抗衰老等健康管理服务。截至2022年8月，集团（含并购基金）在主要城市拥有155家体检与医疗中心，并在全国200多个城市建立了800多家合作机构网络。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; margin-top: 20px; font-size: 12px; color: #666;">
+                            <span style="float: right;">1/17</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 操作栏 - 固定在弹窗底部 -->
+            <div class="modal-footer" style="position: sticky; bottom: 0; background: white; border-top: 1px solid #e0e0e0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100;">
+                <button class="btn btn-secondary" onclick="printCompleteReport()">打印</button>
+                <button class="btn btn-primary" onclick="closeCompleteReportModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+
